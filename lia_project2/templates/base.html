@@ -1,0 +1,91 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Eventify{% endblock %}</title>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'events/homepage.css' %}">
+    {% block extra_stylesheets %}
+    {% endblock %}
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+
+<body>
+    {% block header %}
+        <header>
+            <div class="top-bar">
+                <div class="logo">
+                    <a href="{% url 'homepage' %}">Eventify</a>
+                </div>
+                <div class="auth-buttons">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'created_events' %}" class="dashboard">Dashboard</a>
+                        <a href="{% url 'accounts:logout' %}" class="logout">Logout</a>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="login">Log in</a>
+                        <a href="{% url 'accounts:signup' %}" class="signup">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="bottom-bar">
+                <nav>
+                    <a href="{% url 'homepage' %}">Home</a>
+                    <a href="{% url 'event_list' %}">Listings</a>
+                </nav>
+                <form class="search-bar" method="get" action="{% if request.path == '/' %}{% url 'homepage' %}{% else %}{% url 'event_list' %}{% endif %}">
+                    <input type="text" name="q" placeholder="Events..." value="{{ query }}">
+                
+                    <select name="province">
+                      <option value="">Province</option>
+                      {% for prov, cities in provinces.items %}
+                        <option value="{{ prov }}" {% if selected_province == prov %}selected{% endif %}>{{ prov }}</option>
+                      {% endfor %}
+                    </select>
+                
+                    <select name="city" {% if not selected_province %}disabled{% endif %}>
+                      <option value="">City</option>
+                      {% for city_option in cities %}
+                        <option value="{{ city_option }}" {% if selected_city == city_option %}selected{% endif %}>{{ city_option }}</option>
+                      {% endfor %}
+                    </select>
+                
+                    <button type="submit" class="search">Search</button>
+                  </form>
+            </div>
+        </header>
+    {% endblock %}
+
+  <div class="container">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  <footer>
+    <div class="footer-nav">
+        <a href="{% url 'homepage' %}">Home</a>
+        <a href="{% url 'event_list' %}">Listings</a>
+    </div>
+    <div class="social-links">
+        <a href=""><span class="fab fa-facebook"></span></a>
+        <a href=""><span class="fab fa-instagram"></span></a>
+        <a href=""><span class="fab fa-youtube"></span></a>
+        <a href=""><span class="fab fa-tiktok"></span></a>
+    </div>
+    <div class="copyright">
+        © 2025, Eventify. All Rights Reserved
+    </div>
+  </footer>
+  
+</body>
+</html>

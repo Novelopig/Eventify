@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'events/eventlist.css' %}">
+{% endblock %}
+
+{% block content %}
+{% get_media_prefix as MEDIA_URL %}
+    
+<!-- Display banner according to selected category -->
+{% if selected_category %}
+    <section class="main">
+        {% if selected_category == "Music" %}
+            <div class="main-banner music-banner">
+                <h1>Enjoy the Best Music Events</h1>
+            </div>
+        {% elif selected_category == "Game" %}
+            <div class="main-banner game-banner">
+                <h1>Join Exciting Gaming Competitions</h1>
+            </div>
+        {% elif selected_category == "Sports" %}
+            <div class="main-banner sports-banner">
+                <h1>Experience Thrilling Sports Matches</h1>
+            </div>
+        {% elif selected_category == "Developer" %}
+            <div class="main-banner dev-banner">
+                <h1>Explore Developer Conferences</h1>
+            </div>
+        {% elif selected_category == "Conference" %}
+            <div class="main-banner conf-banner">
+                <h1>Join Inspiring Conferences</h1>
+            </div>
+        {% elif selected_category == "Travel" %}
+            <div class="main-banner travel-banner">
+                <h1>Discover Amazing Travel Destinations</h1>
+            </div>
+        {% endif %}
+    </section>
+{% endif %}
+
+<!-- Date and Category's Sort and Filter Tab -->
+<section class="filter-container">
+    <form method="GET" action="{% url 'event_list' %}">
+        <select class="btn" name="date">
+            <option value="any" {% if selected_date == "any" %}selected{% endif %}>Any Day</option>
+            <option value="this_week" {% if selected_date == "this_week" %}selected{% endif %}>This Week</option>
+            <option value="next_week" {% if selected_date == "next_week" %}selected{% endif %}>Next Week</option>
+        </select>
+        <select class="btn" name="category">
+            <option value="" {% if not selected_category %}selected{% endif %}>All</option>
+            {% for category in categories %}
+                <option value="{{ category.name }}" {% if category.name == selected_category %}selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn filter-submit">Filter</button>
+    </form>
+</section>
+
+<section class="subtitle">
+    <h2 class="all">All</h2>
+</section>
+
+<section class="event-cards">
+    {% if all_events.exists %}
+    {% comment %} {% for event in all_events %} {% endcomment %}
+    {% for event in page_obj %}
+    <div class="event-card">
+        {% if event.image %}
+            <a href="{% url 'event_detail' event.id %}">
+                <img src="{{ event.image.url }}" alt="Event Image" class="event-image">
+            </a>
+        {% else %}
+            <p>No image available for this event.</p>
+        {% endif %}
+        <div class="event-card-content">
+            <div class="event-header">
+                <h3>{{ event.title }}</h3>
+                <form action="{% url 'toggle_like' event.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="like-btn">
+                        {% if user.is_authenticated and event.id in user_liked_events %}
+                            <span class="favorite fas fa-heart"></span>
+                        {% else %}
+                            <span class="favorite fa-regular fa-heart"></span>
+                        {% endif %}
+                    </button>
+                </form>  
+            </div>
+            <p><i class="fa-solid fa-calendar-days"></i> {{ event.start_datetime|date:"D, M j, g:i A" }}</p>
+            <p>Location: {{ event.location }}</p>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    {% if query %}
+        <p>No events found matching your search.</p>
+    {% else %}
+        <p>No events available at the moment.</p>
+    {% endif %}
+{% endif %}
+</section>
+
+<section class="pagination">
+    <div class="pagination-container">
+        {% if page_obj.has_previous %}
+         <a href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_date %}&date={{ selected_date }}{% endif %}" class="btn">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_date %}&date={{ selected_date }}{% endif %}" class="btn">Previous</a>
+        {% endif %}
+        <span class="current-page">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+         <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_date %}&date={{ selected_date }}{% endif %}" class="btn">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_date %}&date={{ selected_date }}{% endif %}" class="btn">Last</a>
+         {% endif %}
+    </div>
+</section>
+
+<section class="categories">
+    {% for category in categories %}
+        <a href="{% url 'event_list' %}?category={{ category.name }}">
+            <div>
+                {% if category.name == "Music" %}
+                    <span class="fas fa-music"></span>
+                {% elif category.name == "Game" %}
+                    <span class="fas fa-gamepad"></span>
+                {% elif category.name == "Sports" %}
+                    <span class="fas fa-basketball-ball"></span>
+                {% elif category.name == "Developer" %}
+                    <span class="fas fa-code"></span>
+                {% elif category.name == "Conference" %}
+                    <span class="fas fa-users"></span>
+                {% elif category.name == "Travel" %}
+                    <span class="fas fa-plane"></span>
+                {% else %}
+                    <span class="fas fa-folder"></span>
+                {% endif %}
+                <br>{{ category.name }}
+            </div>
+        </a>
+    {% endfor %}
+</section>
+
+{% endblock %}

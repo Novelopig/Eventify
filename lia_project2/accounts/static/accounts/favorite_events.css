@@ -1,0 +1,163 @@
+.middlecard {
+    max-width: 1300px;
+    padding: 15px 50px;
+}
+
+/* Banner */
+.banner h1 {
+    font-size: 40px;
+    color: #1a1313;
+}
+
+.banner h3 {
+    font-size: 25px;
+    font-weight: 400;
+    color: #565151;
+}
+
+/* Table */
+.table {
+    max-width: 1200px;
+    border-collapse: collapse;
+    margin-top: 15px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
+}
+
+.table a {
+    text-decoration: none;
+    color: #1a1313;
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.table a:hover {
+    color: #FF5A5F;
+}
+
+.table button {
+    padding: 5px 8px;
+    border-radius: 5px;
+    border-color: #FF5A5F;
+    cursor: pointer;
+}
+
+.table button:hover {
+    background-color: #FF3A3F;
+}
+
+th, td {
+    padding: 15px 30px;
+    text-align: left;
+    font-size: 16px;
+}
+
+th:first-child,
+td:first-child {
+    width: 200px;
+    word-wrap: break-word; 
+    white-space: normal; 
+}
+
+thead th {
+    background-color: #ffcb47;
+    font-weight: bold;
+    color: #1a1313;
+    font-size: 18px;
+}
+
+tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+td input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0 auto;
+    display: block;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+/* Responsive Styles */
+@media (max-width: 1176px) {
+    .middlecard {
+        padding: 15px 30px;
+    }
+
+    .table {
+        font-size: 15px;
+    }
+
+    th, td {
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 876px) {
+    .middlecard {
+        padding: 10px 20px;
+    }
+
+    .banner h1 {
+        font-size: 30px;
+    }
+
+    .banner h3 {
+        font-size: 20px;
+    }
+
+    .actionbar {
+        align-items: stretch;
+    }
+
+    .actionbar button {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 8px 10px;
+    }
+}
+
+@media (max-width: 674px) {
+    .banner h1 {
+        font-size: 24px;
+    }
+
+    .banner h3 {
+        font-size: 18px;
+    }
+
+    .actionbar h3 {
+        font-size: 18px;
+    }
+
+    .actionbar select, .actionbar button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    th, td {
+        padding: 6px 8px;
+        font-size: 14px;
+    }
+
+    .table {
+        overflow-x: auto;
+    }
+}

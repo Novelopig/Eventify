@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/dashboard.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/edit_profile.css' %}">
+{% endblock %}
+
+{% block header %}
+<header class="navbar">
+    <div class="container">
+        <a href="{% url 'homepage' %}" class="logo">Eventify</a>
+        <nav>
+            <a>{{ user.username }}</a>
+            <a href="{% url 'homepage' %}">Homepage</a>
+            <a href="{% url 'accounts:password_update' %}">Update Password</a>
+            <a href="{% url 'accounts:logout' %}" class="logout">Logout</a>
+        </nav>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<main class="dashboard-layout">
+    <section class="userdashboard">
+        <div class="user-list">
+            <div class="user-id">
+                {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
+                {% else %}
+                <img src="{% static 'accounts/images/default-profile.png' %}" alt="Default Profile Picture">
+                {% endif %}
+                <h1>{{ user.username }}</h1>
+                <h3>{{ user.email }}</h3>
+                <p><strong>Bio:</strong> {{ user.bio }}</p>
+                <p><strong>Joined:</strong> {{ user.date_joined }}</p>
+            </div>
+
+            <ul class="user-events">
+                <p class="dashboard">Dashboard</p>
+                <li><a href="{% url 'created_events' %}">My Events</a></li>
+                <li><a href="{% url 'event_creation' %}">Create Events</a></li>
+                <li><a href="{% url 'favorite-events' %}">Favorite Events</a></li>
+                <li><a href="{% url 'attended-events' %}">Attended Events</a></li>
+            </ul>
+            <ul class="user-preferences">
+                <li><a href="{% url 'accounts:edit_profile' %}">Edit Profile</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="middlecard">
+      <h1>Edit Profile</h1>
+
+      {% if messages %}
+          {% for message in messages %}
+            <p style="color: green;">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+      
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <label>Email:</label>
+        <input type="email" name="email" value="{{ user.email }}" required>
+      
+        <label>Bio:</label>
+        <textarea name="bio">{{ user.bio }}</textarea>
+      
+        <label>Profile Picture:</label>
+        <input type="file" name="profile_picture">
+
+        <button type="submit" class="event-submit">Save Changes</button>
+      </form>      
+    </section>
+</main>
+{% endblock %}

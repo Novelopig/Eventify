@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/dashboard.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/favorite_events.css' %}">
+{% endblock %}
+
+{% block header %}
+<header class="navbar">
+    <div class="container">
+        <a href="{% url 'homepage' %}" class="logo">Eventify</a>
+        <nav>
+            <a>{{ user.username }}</a>
+            <a href="{% url 'homepage' %}">Homepage</a>
+            <a href="{% url 'accounts:password_update' %}">Update Password</a>
+            <a href="{% url 'accounts:logout' %}" class="logout">Logout</a>
+        </nav>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<main class="dashboard-layout">
+    <section class="userdashboard">
+        <div class="user-list">
+            <div class="user-id">
+                {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
+                {% else %}
+                <img src="{% static 'accounts/images/default-profile.png' %}" alt="Default Profile Picture">
+                {% endif %}
+                <h1>{{ user.username }}</h1>
+                <h3>{{ user.email }}</h3>
+                <p><strong>Bio:</strong> {{ user.bio }}</p>
+                <p><strong>Joined:</strong> {{ user.date_joined }}</p>
+            </div>
+
+            <ul class="user-events">
+                <p class="dashboard">Dashboard</p>
+                <li><a href="{% url 'created_events' %}">My Events</a></li>
+                <li><a href="{% url 'event_creation' %}">Create Events</a></li>
+                <li><a href="{% url 'favorite-events' %}">Favorite Events</a></li>
+                <li><a href="{% url 'attended-events' %}">Attended Events</a></li>
+            </ul>
+            <ul class="user-preferences">
+                <li><a href="{% url 'accounts:edit_profile' %}">Edit Profile</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="middlecard">
+        {% if favorited_events %}
+        <div class="banner">
+            <h1>Favorites</h1>
+            <h3>Number of favorited events: {{ favorited_events.count }}</h3>
+        </div>     
+        <div class="table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Date and Time</th>
+                        <th>Location</th>
+                        <th>Max Attendees</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in favorited_events %}
+                    <tr>
+                        <td><a href="{% url 'event_detail' event.id %}">{{ event.title }}</a></td>
+                        <td>{{ event.start_datetime }}</td>
+                        <td>{{ event.location }}</td>
+                        <td>{{ event.max_attendees }}</td>
+                        <td>
+                            <form action="{% url 'toggle_favorite' event.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>You have no favorited events.</p>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

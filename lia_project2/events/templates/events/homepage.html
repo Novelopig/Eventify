@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <section class="hero">
+        <h1>Connecting people to create meaningful moments together.</h1>
+        <div class="hero-buttons">
+            <a href="{% url 'event_creation' %}" class="create">Create</a>
+        </div>
+    </section>
+
+    <section class="categories">
+        {% for category in categories %}
+            <a href="{% url 'event_list' %}?category={{ category.name }}">
+                <div>
+                    {% if category.name == "Music" %}
+                        <span class="fas fa-music"></span>
+                    {% elif category.name == "Game" %}
+                        <span class="fas fa-gamepad"></span>
+                    {% elif category.name == "Sports" %}
+                        <span class="fas fa-basketball-ball"></span>
+                    {% elif category.name == "Developer" %}
+                        <span class="fas fa-code"></span>
+                    {% elif category.name == "Conference" %}
+                        <span class="fas fa-users"></span>
+                    {% elif category.name == "Travel" %}
+                        <span class="fas fa-plane"></span>
+                    {% else %}
+                        <span class="fas fa-folder"></span>
+                    {% endif %}
+                    <br>{{ category.name }}
+                </div>
+            </a>
+        {% endfor %}
+    </section>
+    
+    <section class="subtitle">
+        <h2 class="all">All</h2>
+    </section>
+
+    <section class="event-cards">
+        {% if all_events.exists %}
+        {% for event in all_events %}
+            <div class="event-card">
+                {% if event.image %}
+                    <a href="{% url 'event_detail' event.id %}">
+                        <img src="{{ event.image.url }}" alt="Event Image" class="event-image">
+                    </a>
+                {% else %}
+                    <p>No image available for this event.</p>
+                {% endif %}
+                <div class="event-card-content">
+                    <div class="event-header">
+                        <h3>{{ event.title }}</h3>
+                        <form action="{% url 'toggle_like' event.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="like-btn">
+                                {% if user.is_authenticated and event.id in user_liked_events %}
+                                    <span class="favorite fas fa-heart"></span>
+                                {% else %}
+                                    <span class="favorite fa-regular fa-heart"></span>
+                                {% endif %}
+                            </button>
+                        </form>  
+                    </div>
+                    <p><i class="fa-solid fa-calendar-days"></i> {{ event.start_datetime|date:"D, M j, g:i A" }}</p>
+                    <p>Location: {{ event.location }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        {% if query %}
+            <p>No events found matching your search.</p>
+        {% else %}
+            <p>No events available at the moment.</p>
+        {% endif %}
+    {% endif %}
+    
+    </section>
+
+    <section class="subtitle">
+        <h2 class="feature">Featured Events</h2>
+    </section>
+
+    <section class="event-cards">
+            {% for event in featured_events %}
+                <div class="event-card">
+                    {% if event.image %}
+                        <a href="{% url 'event_detail' event.id %}">
+                            <img src="{{ event.image.url }}" alt="Event Image" class="event-image">
+                        </a>
+                    {% else %}
+                        <p>No image available for this event.</p>
+                    {% endif %}
+                    <div class="event-card-content">
+                        <div class="event-header">
+                            <h3>{{ event.title }}</h3>
+                            <form action="{% url 'toggle_like' event.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="like-btn">
+                                    {% if user.is_authenticated and event.id in user_liked_events %}
+                                        <span class="favorite fas fa-heart"></span>
+                                    {% else %}
+                                        <span class="favorite fa-regular fa-heart"></span>
+                                    {% endif %}
+                                </button>
+                            </form>  
+                        </div>
+                        <p><i class="fa-solid fa-calendar-days"></i> {{ event.start_datetime|date:"D, M j, g:i A" }}</p>
+                        <p>Location: {{ event.location }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No featured events available.</p>
+            {% endfor %}
+    </section>    
+{% endblock %}

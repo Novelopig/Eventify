@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% load static %} 
+
+{% block extra_stylesheets %}
+    <link rel="stylesheet" href="{% static 'events/eventdetail.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<section>
+    {% if event.image %}
+    <div class="image-container">
+        <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-image">
+    </div>
+    {% else %}
+        <p>No image available for this event.</p>
+    {% endif %}
+</section>
+
+<main class="main">
+    <section class="first">
+        <h1>{{ event.title }}</h1>
+
+        <!-- Attend Event button -->
+        {% if user.is_authenticated %}
+        <form action="{% url 'toggle_attendance' event.id %}" method="POST">
+            {% csrf_token %}
+        
+            {% if event.attendee_count < event.max_attendees %}
+                {% if user in event.attendees.all %}
+                    <button type="submit" class="btn {% if user in event.attendees.all %} attending {% endif %}">
+                        <span class="fas fa-check"></span> Attending
+                        <br> {{ event.attendee_count }} / {{ event.max_attendees }}
+                    </button>
+                {% else %}
+                    <button type="submit" class="btn">
+                        <span class="fas fa-calendar-check"></span> Attend Event
+                        <br> {{ event.attendee_count }} / {{ event.max_attendees }}
+                    </button>
+                {% endif %}
+            {% else %}
+                <button type="button" class="btn" disabled>
+                    <span class="fas fa-exclamation-circle"></span> Event Full
+                    <br> {{ event.attendee_count }} / {{ event.max_attendees }}
+                </button>
+            {% endif %}
+        </form>
+        {% endif %}
+    </section>
+
+    <section class="event-details">
+        <div class="details">
+            <h2>Event Details:</h2>
+            <p><strong>Start Date:</strong> {{ event.start_datetime }}</p>
+            <p><strong>End Date:</strong> {{ event.end_datetime }}</p>
+            <p><strong>Max Attendees:</strong> {{ event.max_attendees }}</p>
+        </div>
+
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2886.233701179471!2d-73.5673!3d45.5074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cc91b98bb10a0df%3A0x704cb42c9db1745f!2sMaison%20Symphonique%20de%20Montr%C3%A9al!5e0!3m2!1sen!2sca!4v1648623527104!5m2!1sen!2sca" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        
+        {% comment %} 
+        Temporarily shutting down Maps API
+        <div class="map-container">
+             {% if event.latitude and event.longitude %}
+            <iframe
+                src="https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_KEY }}&q={{ event.location }}"
+                class="event-map"
+                allowfullscreen=""
+                loading="lazy"
+                >
+            </iframe>
+            <p>{{ event.location }}</p>
+        </div>
+        {% else %}
+            <p>No location available for this event.</p>
+        {% endif %}
+        </div> {% endcomment %}
+    </section>
+
+    <section class="event-information">
+        <h2>Event Information:</h2>
+        <p>{{ event.description }}</p>
+    </section>
+
+    <section>
+        <div class="btn-container">
+            <!-- Save event button -->
+            {% if user.is_authenticated %} 
+            <form action="{% url 'toggle_favorite' event.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn {% if event.id in favorite_events %} saved {% endif %}">
+                    {% if event.id in favorite_events %}
+                        <span class="fas fa-star"></span> Saved Event
+                    {% else %}
+                        <span class="far fa-star"></span> Save Event
+                    {% endif %}
+                </button>
+            </form>
+            {% endif %}
+    
+            <!-- Flag inappropriate content button -->
+            {% if user.is_authenticated %}
+            <form action="{% url 'toggle_flag' event.id %}" method="POST" class="flag-form">
+                {% csrf_token %}
+                <button type="submit" class="btn {% if is_flagged %} flagged {% endif %}">
+                    {% if is_flagged %}
+                        <span class="fas fa-flag"></span> Cancel Flag
+                    {% else %}
+                        <span class="far fa-flag"></span> Flag
+                    {% endif %}
+                </button>
+            </form>
+            {% endif %}
+    
+        </div>
+    </section>
+    
+    <!-- Category Click Button -->
+    <section class="category">
+        <h3>
+            Category: 
+            <a href="{% url 'event_list' %}?category={{ event.category.name }}">
+                <span>{{ event.category }}</span>
+            </a>
+        </h3>
+    </section>
+
+    <!-- Commenting on Events -->
+    <section class="comments">
+        <h2>Comments:</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <textarea name="text" rows="3" placeholder="Write a comment..." {% if not user.is_authenticated %}disabled{% endif %} required></textarea>
+            <button type="submit" class="comment-btn" {% if not user.is_authenticated %}disabled{% endif %}>Post Comment</button>
+        </form>
+            {% if comments %}
+            {% for comment in comments %}
+                <strong>{{ comment.user.username }}</strong>
+                <span class="comment-time">{{ comment.created_at|date:"M j, Y, g:i A" }}</span>
+                <p>{{ comment.text }}</p>
+            {% endfor %}
+            {% else %}
+        <p>No comments yet. Be the first to comment!</p>
+            {% endif %}
+    </section>
+
+    <div class="event-actions">
+        <a href="{% url 'event_list' %}" class="back-btn">Back to Events</a>
+    </div>
+    
+</main>
+
+
+{% endblock %}

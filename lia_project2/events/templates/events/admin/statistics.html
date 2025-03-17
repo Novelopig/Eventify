@@ -1,0 +1,34 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block content %}
+
+ <h1>Eventify - Admin Statistics</h1>
+    <div>
+        <h2>Total Events: {{ total_events }}</h2>
+        <h2>Total Likes: {{ total_likes }}</h2>
+        <h2>Total Users: {{ total_users }}</h2>
+    </div>
+
+    <div>
+        <h2>Most Commented events</h2>
+        <ul>
+        {% for event in most_commented_events %}
+            <li>
+            {{ event.title }} ({{ event.comment_count }} comments)
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <div>
+        <h2>Users with the Most Comments</h2>
+        <ul>
+        {% for user in most_commented_users %}
+            <li>
+            {{ user.username }} ({{ user.comment_count }} comments)
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}

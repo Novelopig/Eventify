@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/dashboard.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/createevent.css' %}">
+{% endblock %}
+
+{% block header %}
+<header class="navbar">
+    <div class="container">
+        <a href="{% url 'homepage' %}" class="logo">Eventify</a>
+        <nav>
+            <a>{{ user.username }}</a>
+            <a href="{% url 'homepage' %}">Homepage</a>
+            <a href="{% url 'accounts:password_update' %}">Update Password</a>
+            <a href="{% url 'accounts:logout' %}" class="logout">Logout</a>
+        </nav>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<main class="dashboard-layout">
+    <section class="userdashboard">
+        <div class="user-list">
+            <div class="user-id">
+                {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
+                {% else %}
+                <img src="{% static 'accounts/images/default-profile.png' %}" alt="Default Profile Picture">
+                {% endif %}
+                <h1>{{ user.username }}</h1>
+                <h3>{{ user.email }}</h3>
+                <p><strong>Bio:</strong> {{ user.bio }}</p>
+                <p><strong>Joined:</strong> {{ user.date_joined }}</p>
+            </div>
+            
+            <ul class="user-events">
+                <p class="dashboard">Dashboard</p>
+                <li><a href="{% url 'created_events' %}">My Events</a></li>
+                <li><a href="{% url 'event_creation' %}">Create Events</a></li>
+                <li><a href="{% url 'favorite-events' %}">Favorite Events</a></li>
+                <li><a href="{% url 'attended-events' %}">Attended Events</a></li>    
+            </ul>
+            <ul class="user-preferences">
+                <li><a href="{% url 'accounts:edit_profile' %}">Edit Profile</a></li>
+            </ul>
+        </div>            
+    </section>
+
+    <section class="middlecard">
+        <h1>{% if event %}Edit Event{% else %}Create Event{% endif %}</h1>
+
+        {% if error_messages %}
+        <div class="error-container">
+            {% for error in error_messages %}
+                <p class="error-message">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <input type="hidden" name="edit" value="{{ event.id }}">
+
+            <div class="form-item">
+                <label for="title">Event Title:</label>
+                <input type="text" id="title" name="title" value="{{ event.title|default_if_none:'' }}" required>
+            </div>
+
+            <div class="form-item">
+                <label for="category">Category:</label>
+                <select name="category" id="category">
+                    {% for category in categories %}
+                        <option value="{{ category.name }}" {% if event and event.category.name == category.name %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-item">
+                <label for="start_datetime">Start Date & Time:</label>
+                <input type="datetime-local" name="start_datetime" id="start_datetime"
+                    value="{{ event.start_datetime|date:'Y-m-d\TH:i' }}" required>
+            </div>
+
+            <div class="form-item">
+                <label for="end_datetime">End Date & Time:</label>
+                <input type="datetime-local" name="end_datetime" id="end_datetime"
+                    value="{{ event.end_datetime|date:'Y-m-d\TH:i' }}" required>
+            </div>
+
+            <div class="form-item">
+                <label for="max_attendees">Max Attendees:</label>
+                <input type="number" name="max_attendees" id="max_attendees"
+                    value="{{ event.max_attendees|default_if_none:'' }}" required>
+            </div>
+
+            <div class="form-item">
+                <label for="location">Address:</label>
+                <input type="text" name="location" id="location" value="{{ event.location|default_if_none:'' }}" required>
+            </div>
+
+            <!-- Province Selection -->
+            <div class="form-item">
+                <label for="province">Province:</label>
+                <input type="text" name="province" id="province" value="{{ selected_province }}" required>
+            </div>
+
+            <!-- City Selection -->
+            <div class="form-item">
+                <label for="city">City:</label>
+                <input type="text" name="city" id="city" value="{{ selected_city }}" required>
+            </div>
+
+            <div class="form-item">
+                <label for="latitude">Latitude:</label>
+                <input type="text" name="latitude" id="latitude" value="{{ event.latitude|default_if_none:'' }}">
+            </div>
+
+            <div class="form-item">
+                <label for="longitude">Longitude:</label>
+                <input type="text" name="longitude" id="longitude" value="{{ event.longitude|default_if_none:'' }}">
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-item">
+                <label>Event Image:</label>
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" alt="Event Image" class="image-preview">
+                {% endif %}
+                <label for="file-upload" class="custom-file-upload">Upload Image</label>
+                <input type="file" id="file-upload" name="image" accept="image/*">
+            </div>
+
+            <!-- Description -->
+            <div class="form-item-description">
+                <label for="description">Event Description:</label>
+                <br>
+                <textarea name="description" id="description" cols="30" rows="8" required>{{ event.description|default_if_none:'' }}</textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="event-submit">
+                {% if event %}Edit{% else %}Create Event{% endif %}
+            </button>
+        </form>
+    </section>
+</main>
+{% endblock %}

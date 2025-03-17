@@ -1,0 +1,133 @@
+/* MIDDLECARD */
+.middlecard {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 15px 50px;
+}
+
+.middlecard h1 {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+/* Event Information Form */
+.form-item {
+    font-size: 24px;
+    background-color: #f5f5f5;
+    margin: 15px 0px;
+}
+
+.form-item input {
+    border: none;
+    font-size: 20px;
+    width: 300px;
+    border: 1px solid #141313;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+/* User Image */
+input[type="file"] {
+    display: none;
+}
+
+/* Upload Button */
+.custom-file-upload {
+    background-color: #ffcb47;
+    color: #1a1313;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid #1a1313;
+    padding: 5px 10px;
+}
+
+.custom-file-upload:hover {
+    background-color: #e5b73c;
+}
+
+/* Image Preview Box */
+.image-preview {
+    display: flex;
+    border: 1px solid #000;
+    resize: none;
+    background-color: #f9f9f9;   
+    width: 300px;
+}
+
+/* Label */
+.form-item-description label {
+    font-size: 24px;
+}
+
+/* Textarea */
+.form-item-description textarea {
+    width: 500px;
+    height: 150px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px; 
+    margin-bottom: 30px;
+}
+
+textarea:focus {
+    border-color: #FFCB47;
+    outline: none;
+}
+
+/* Submit Button */
+.event-submit {
+    background-color: #FF5A5F;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px; 
+    display: block; 
+}
+
+.event-submit:hover {
+    background-color: #FF3A3F;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* RESPONSIVE STYLING FOR MOBILE */
+@media only screen and (max-width: 774px) {
+
+    h1{
+        font-size: 30px;
+    }
+
+    .middlecard {
+        padding: 10px;
+        width: 100%;
+        min-height: auto;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .middlecard > * {
+        width: 100%;
+    }
+
+    .form {
+        flex-direction: column;
+    }
+
+    .form-item input {
+        width: 280px;
+        border: 1px solid #141313;
+        border-radius: 5px;
+        background-color: #fff;
+    } 
+
+    .form-item-description textarea {
+        width: 100%;
+    }
+    
+}
