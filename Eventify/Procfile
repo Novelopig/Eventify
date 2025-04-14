@@ -1,1 +1,1 @@
-web: gunicorn Eventify.wsgi
+web: gunicorn eventify.wsgi:application
