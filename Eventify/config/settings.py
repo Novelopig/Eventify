@@ -68,7 +68,7 @@ MIDDLEWARE = [
 ]
 
 
-ROOT_URLCONF = "eventify.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -87,7 +87,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "eventify.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
